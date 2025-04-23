@@ -1,8 +1,8 @@
 // 博客配置
 const CONFIG = {
-    title: '舥舥🔭兹',
-    favicon: 'https://tc.r07.cloudns.be/截图20250418170311.png',
-    enablePasswordProtection: true  // 设置为true时启用密码验证，false时禁用
+  title: '派派🔭茈',
+  favicon: 'https://cdn.jsdelivr.net/gh/zb9678/img@main/im7/04.21:00:17:45.png',
+  enablePasswordProtection: true   // 设置为true时启用密码验证，false时禁用
 };
 
 // 古诗词数据
@@ -1521,7 +1521,7 @@ const HTML_TEMPLATE = `
         </aside>
     </div>
     <button class="back-top" aria-label="返回顶部">🏠</button>
-    <a href="https://github.com/zcr07/git-blog-share/edit/main/worker.js" target="_blank" class="comment-button" aria-label="留言板" rel="noopener noreferrer">📋</a>
+    <a href="https://github.com/zcr07/git-blog-share/edit/main/worker.js" target="_blank" class="comment-button" aria-label="留言板" rel="noopener noreferrer">🍳</a>
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">🔅</button>
     {{api_limit_info}}
 </body>
@@ -1641,7 +1641,7 @@ async function generatePostList(env) {
             return postsCache.data;
         }
 
-        const apiUrl = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/`;
+        const apiUrl = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/posts`;
         
         const { response, rateLimit } = await fetchWithRetry(apiUrl, {
             headers: {
@@ -1860,48 +1860,52 @@ export default {
                     }
                 </style>
                 <script>
-                    function checkUnlock() {
-                        const unlockTime = localStorage.getItem('unlockTime');
-                        const storedPasswordVersion = localStorage.getItem('passwordVersion');
-                        const currentPasswordVersion = new Date().toISOString().split('T')[0];
-                        const now = new Date().getTime();
-                        
-                        if (unlockTime && 
-                            storedPasswordVersion === currentPasswordVersion && 
-                            (now - parseInt(unlockTime)) < 30 * 24 * 60 * 60 * 1000) {
-                            document.getElementById('unlock-modal').style.display = 'none';
-                            document.getElementById('main-content').style.display = 'block';
-                        } else {
-                            localStorage.removeItem('unlockTime');
-                            localStorage.removeItem('passwordVersion');
-                        }
-                    }
+    function checkUnlock() {
+        const unlockTime = sessionStorage.getItem('unlockTime');
+        const storedPasswordVersion = localStorage.getItem('passwordVersion');
+        const currentPasswordVersion = new Date().toISOString().split('T')[0];
+        const now = new Date().getTime();
+        
+        if (unlockTime && 
+            storedPasswordVersion === currentPasswordVersion && 
+            (now - parseInt(unlockTime)) < 30 * 24 * 60 * 60 * 1000) {
+            document.getElementById('unlock-modal').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+        } else {
+            sessionStorage.removeItem('unlockTime');
+            sessionStorage.removeItem('passwordVersion');
 
-                    function verifyPassword(correctPassword) {
-                        const input = document.getElementById('password-input');
-                        const error = document.getElementById('unlock-error');
-                        
-                        if (input.value === correctPassword) {
-                            const currentPasswordVersion = new Date().toISOString().split('T')[0];
-                            localStorage.setItem('unlockTime', new Date().getTime());
-                            localStorage.setItem('passwordVersion', currentPasswordVersion);
-                            document.getElementById('unlock-modal').style.display = 'none';
-                            document.getElementById('main-content').style.display = 'block';
-                            error.style.display = 'none';
-                        } else {
-                            error.style.display = 'block';
-                            input.value = '';
-                        }
-                    }
+            // ✅ 新增：自动聚焦密码输入框
+            document.getElementById('password-input')?.focus();
+        }
+    }
 
-                    document.getElementById('password-input').addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            verifyPassword('${env.ADMIN_PASSWORD}');
-                        }
-                    });
+    function verifyPassword(correctPassword) {
+        const input = document.getElementById('password-input');
+        const error = document.getElementById('unlock-error');
+        
+        if (input.value === correctPassword) {
+            const currentPasswordVersion = new Date().toISOString().split('T')[0];
+            sessionStorage.setItem('unlockTime', new Date().getTime());
+            sessionStorage.setItem('passwordVersion', currentPasswordVersion);                            
+            document.getElementById('unlock-modal').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            error.style.display = 'none';
+        } else {
+            error.style.display = 'block';
+            input.value = '';
+        }
+    }
 
-                    checkUnlock();
-                </script>
+    document.getElementById('password-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            verifyPassword('${env.ADMIN_PASSWORD}');
+        }
+    });
+
+    checkUnlock();
+</script>
+
                 </div>
             ` : '</div>';
 
@@ -1910,7 +1914,7 @@ export default {
                 const randomPoem = POEMS[Math.floor(Math.random() * POEMS.length)];
                 const welcomeContent = `
                     <div style="text-align: center;">
-                        <h1 style="margin-bottom: 40px; color: var(--main-text-color);">皅皅🔭慈</h1>
+                        <h1 style="margin-bottom: 40px; color: var(--main-text-color);">🕮 KEVINZ の BLOG 🕮</h1>
                     </div>
                     <div class="welcome-poem">
                         <div class="poem-content">${randomPoem.content}</div>
@@ -1918,44 +1922,47 @@ export default {
                         <div class="poem-title">《${randomPoem.title}》</div>
                     </div>
                 `;
-
-                let html = HTML_TEMPLATE
+            
+                const html = HTML_TEMPLATE
                     .replace('{{page_class}}', pageClass)
                     .replace('{{post_list}}', postList)
                     .replace('{{content}}', unlockModalHtml + welcomeContent + unlockScriptHtml)
                     .replace('{{toc}}', `
                         <div class="toc-empty" style="height: auto; min-height: 150px; padding: 2rem; margin: 1rem;">
-                            <div class="toc-empty-icon" style="font-size: 7rem; margin-bottom: 1rem; color: var(--text-color-secondary);">📑</div>
-                            <div class="toc-empty-text" style="font-size: 1.4rem; color: var(--text-color-secondary); font-weight: 500;">暂无目录</div>
+                            <div class="toc-empty-text" style="font-size: 1.4rem; color: var(--text-color-secondary); font-weight: 500;">寤之家</div>
+                            <div class="toc-empty-icon" style="font-size: 7rem; margin-bottom: 1rem; color: var(--text-color-secondary);">🧞‍♀️🧟</div>
                         </div>
                     `)
                     .replace('{{api_limit_info}}', postsCache.rateLimit ? generateApiLimitHtml(postsCache.rateLimit) : '');
-
+            
                 return new Response(html, {
                     headers: { 'Content-Type': 'text/html;charset=UTF-8' }
                 });
             }
-
+            
+            // 👇 修改后的逻辑，支持子目录（如 /posts/doc/...）
             if (path.startsWith('/posts/')) {
                 pageClass = 'is-post';
-                const postPath = path.replace('/posts/', '');
-                const content = await getPostContent(postPath, env);
-                
-                let html = HTML_TEMPLATE
+                const postPath = path.slice('/posts/'.length); // 相对路径
+                const content = await getPostContent(`posts/${postPath}`, env); // 支持 posts/doc/... 结构
+            
+                const html = HTML_TEMPLATE
                     .replace('{{page_class}}', pageClass)
                     .replace('{{post_list}}', postList)
-                    .replace('{{content}}', unlockModalHtml + `<div id="content" data-markdown="${encodeURIComponent(content)}"></div>` + unlockScriptHtml)
+                    .replace('{{content}}', `<div id="content" data-markdown="${encodeURIComponent(content)}"></div>`)
                     .replace('{{toc}}', '')
                     .replace('{{api_limit_info}}', '');
-
+            
                 return new Response(html, {
                     headers: { 'Content-Type': 'text/html;charset=UTF-8' }
                 });
             }
-
-            return new Response('Not Found', { status: 404 });
-        } catch (error) {
-            return new Response('Error: ' + error.message, { status: 500 });
-        }
-    }
-}; 
+            
+            
+                        return new Response('Not Found', { status: 404 });
+                    } catch (error) {
+                        return new Response('Error: ' + error.message, { status: 500 });
+                    }
+                }
+            }; 
+            
